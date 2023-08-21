@@ -32,11 +32,8 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ include "trino.serviceAccountName" . }}
-      {{- with .Values.securityContext }}
       securityContext:
-        runAsUser: {{ .runAsUser }}
-        runAsGroup: {{ .runAsGroup }}
-      {{- end }}
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
         - name: config-volume
           configMap:
@@ -60,6 +57,8 @@ spec:
       {{- if .Values.initContainers.coordinator }}
       initContainers:
       {{-  tpl (toYaml .Values.initContainers.coordinator) . | nindent 6 }}
+        securityContext:
+          {{- toYaml .Values.coordinator.securityContext | nindent 12 }}          
       {{- end }}
         {{- range .Values.secretMounts }}
         - name: {{ .name }}
@@ -72,6 +71,8 @@ spec:
         - name: {{ .Chart.Name }}-coordinator
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.coordinator.securityContext | nindent 12 }}          
           env:
             {{- toYaml .Values.env | nindent 12 }}
           envFrom:

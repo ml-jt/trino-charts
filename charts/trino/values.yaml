@@ -12,6 +12,9 @@ image:
 imagePullSecrets:
   - name: registry-credentials
 
+podSecurityContext: {}
+#  runAsNonRoot: true
+
 server:
   workers: 2
   node:
@@ -125,10 +128,6 @@ initContainers: {}
   #     image: busybox:1.28
   #     command: ['sh', '-c', 'echo The worker is running! && sleep 3600']
 
-securityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-
 service:
   type: ClusterIP
   port: 8080
@@ -204,6 +203,14 @@ coordinator:
 
   labels: {}
 
+  securityContext: {}
+  #  runAsUser: 1000
+  #  runAsGroup: 1000
+  #  allowPrivilegeEscalation: false
+  #  capabilities:
+  #    drop:
+  #    - ALL 
+
 worker:
   jvm:
     maxHeapSize: "8G"
@@ -258,6 +265,14 @@ worker:
   annotations: {}
 
   labels: {}
+
+  securityContext: {}
+  #  runAsUser: 1000
+  #  runAsGroup: 1000
+  #  allowPrivilegeEscalation: false
+  #  capabilities:
+  #    drop:
+  #    - ALL   
 
 kafka:
   mountPath: "/etc/trino/schemas"
